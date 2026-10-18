@@ -1,0 +1,56 @@
+<header class="barra-sup">
+  <div>
+    <h1>Alumnos</h1>
+    <p class="sub">{{ todos().length }} alumno(s) registrados</p>
+  </div>
+  <div class="derecha">
+    <div class="buscador">
+      <app-icono nombre="buscar" [tam]="15" />
+      <input type="search" placeholder="Buscar por nombre, codigo o correo"
+             [ngModel]="filtro()" (ngModelChange)="filtro.set($event)">
+    </div>
+  </div>
+</header>
+
+<main class="lamina">
+  @if (error()) { <p class="aviso error">{{ error() }}</p> }
+
+  @if (cargando()) {
+    <p class="cargando">Cargando...</p>
+  } @else {
+    <section class="tarjeta">
+      @if (visibles().length === 0) {
+        <p class="vacio">Ningun alumno coincide con la busqueda.</p>
+      } @else {
+        <table>
+          <thead>
+            <tr><th>Alumno</th><th>Correo</th><th>DNI</th><th>Estado</th></tr>
+          </thead>
+          <tbody>
+            @for (a of visibles(); track a.id) {
+              <tr>
+                <td>
+                  <div class="celda-persona">
+                    <div class="avatar">{{ iniciales(a.nombres + ' ' + a.apellidos) }}</div>
+                    <div class="datos"><b>{{ a.nombres }} {{ a.apellidos }}</b><span>{{ a.codigo }}</span></div>
+                  </div>
+                </td>
+                <td>{{ a.email }}</td>
+                <td>{{ a.dni }}</td>
+                <td>
+                  <span class="pastilla" [class.p-ok]="a.activo" [class.p-neutro]="!a.activo">
+                    {{ a.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </section>
+
+    @if (filtro()) {
+      <p class="pie-tabla">Mostrando {{ visibles().length }} de {{ todos().length }} alumnos</p>
+    }
+  }
+</main>

@@ -1,0 +1,71 @@
+# =====================================================================
+#  Produccion: lo que corre en la maquina de Azure.
+#
+#  Diferencias con el entorno local:
+#    - no hay SQL Server: la base es Azure SQL
+#    - no hay Azurite: el almacen es una cuenta real de Azure
+#    - las imagenes NO se construyen aqui, se bajan del registro
+#    - solo nginx publica puerto; la API no es accesible desde fuera
+#
+#    docker compose -f docker-compose.prod.yml pull
+#    docker compose -f docker-compose.prod.yml up -d
+# =====================================================================
+
+services:
+  api:
+    image: ${REGISTRO}/matriculas-api:${ETIQUETA:-latest}
+    container_name: matriculas-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      # La misma etiqueta de la imagen: /salud la devuelve como 'version'.
+      Despliegue__Version: ${ETIQUETA:-latest}
+      # A donde manda las metricas OpenTelemetry: el Collector, en esta
+      # misma red. Si no esta levantado, la API funciona igual y solo
+      # pierde las metricas.
+      Otel__Endpoint: http://obs-otel-collector:4317
+      ConnectionStrings__Matriculas: ${SQL_CONEXION:?falta SQL_CONEXION}
+      Jwt__Clave:     ${JWT_CLAVE:?falta JWT_CLAVE}
+      Jwt__Emisor:    matriculas-api
+      Jwt__Audiencia: matriculas-web
+      Almacen__Conexion:    ${ALMACEN_CONEXION:?falta ALMACEN_CONEXION}
+      Almacen__Contenedor:  constancias
+    # Sin 'ports': a la API solo se llega desde dentro de la red de
+    # Docker, es decir, solo a traves de nginx. Publicar el 5080 aqui
+    # seria abrir una puerta trasera que se salta las cabeceras de
+    # seguridad y los limites del proxy.
+    networks:
+      - interna
+    healthcheck:
+      # Sin 2>&1: los errores del propio wget (p. ej. "not found") deben
+      # quedar en 'docker inspect', no tirarse a /dev/null.
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/salud >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  web:
+    image: ${REGISTRO}/matriculas-web:${ETIQUETA:-latest}
+    container_name: matriculas-web
+    restart: unless-stopped
+    ports:
+      # 80 y 443 del anfitrion al 8080 y 8443 del contenedor: nginx
+      # corre sin privilegios y un proceso no-root no puede escuchar por
+      # debajo del 1024.
+      - "80:8080"
+      - "443:8443"
+    volumes:
+      # El certificado, copiado por el deploy hook de certbot con dueno
+      # nginx (uid 101). Solo lectura: nginx no tiene por que cambiarlo.
+      - /etc/matriculas-tls:/etc/nginx/tls:ro
+      # Donde certbot deja los retos de renovacion (modo webroot).
+      - /var/www/certbot:/var/www/certbot:ro
+    depends_on:
+      - api
+    networks:
+      - interna
+
+networks:
+  interna:
+    driver: bridge

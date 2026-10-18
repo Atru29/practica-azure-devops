@@ -1,0 +1,108 @@
+# =====================================================================
+#  Observabilidad, fase 1: metricas de la maquina.
+#
+#    node_exporter  lee CPU, RAM, disco y red del anfitrion
+#    Prometheus     las recoge cada 15 s y las guarda (15 dias)
+#    Grafana        las dibuja
+#
+#  Compose aparte del de la aplicacion a proposito: otro ciclo de vida.
+#  Redesplegar la API (lo hace el pipeline) no debe reiniciar Prometheus
+#  ni tocar sus datos. Se levanta a mano, en la maquina, en
+#  ~/observabilidad:
+#
+#      docker compose up --detach
+#
+#  NADA se publica hacia internet. Los tres usan la red del anfitrion
+#  (network_mode: host) y escuchan solo en 127.0.0.1: a Grafana se
+#  llega con un tunel SSH. El NSG no cambia.
+#
+#  Por que red del anfitrion: node_exporter tiene que ver la red de la
+#  MAQUINA, no la de un contenedor; y con los tres en el anfitrion,
+#  127.0.0.1 es el mismo sitio para todos.
+# =====================================================================
+
+services:
+  node-exporter:
+    image: prom/node-exporter:v1.12.1
+    container_name: obs-node-exporter
+    restart: unless-stopped
+    network_mode: host
+    # Ver los procesos del anfitrion, no solo los del contenedor.
+    pid: host
+    command:
+      - --path.rootfs=/host
+      - --web.listen-address=127.0.0.1:9100
+    volumes:
+      # Todo el disco del anfitrion, en solo lectura: de ahi saca el
+      # espacio libre de cada sistema de ficheros. Sin ',rslave' (lo que
+      # trae la documentacion): exige que / sea un montaje compartido, y
+      # en WSL no lo es. Solo sirve para ver discos montados DESPUES de
+      # arrancar, y en la maquina no se monta nada en caliente.
+      - /:/host:ro
+
+  prometheus:
+    image: prom/prometheus:v3.15.0
+    container_name: obs-prometheus
+    restart: unless-stopped
+    network_mode: host
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      # 15 dias o 1 GB, lo que llegue antes: el disco es de 29 GB y
+      # las caches de build del pipeline ya ocupan una parte.
+      - --storage.tsdb.retention.time=15d
+      - --storage.tsdb.retention.size=1GB
+      - --web.listen-address=127.0.0.1:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-datos:/prometheus
+
+  # Fase 2. El unico que NO usa la red del anfitrion: tiene que estar en
+  # la red de la aplicacion para que la API le llegue por nombre
+  # (obs-otel-collector:4317), igual que nginx llega a 'api'. Hacia el
+  # anfitrion solo publica, en 127.0.0.1, la salida para Prometheus.
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.162.0
+    container_name: obs-otel-collector
+    restart: unless-stopped
+    command: ["--config=/etc/otelcol/config.yml"]
+    volumes:
+      - ./otel-collector.yml:/etc/otelcol/config.yml:ro
+    ports:
+      - "127.0.0.1:8889:8889"
+    networks:
+      - aplicacion
+
+  grafana:
+    image: grafana/grafana:13.2.4
+    container_name: obs-grafana
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      GF_SERVER_HTTP_ADDR: 127.0.0.1
+      GF_SERVER_HTTP_PORT: "3000"
+      GF_SECURITY_ADMIN_USER: admin
+      # De ~/observabilidad/.env, que no se versiona (plantilla en
+      # .env.ejemplo). Sin ella, Grafana arrancaria con admin/admin.
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_CLAVE:?falta GRAFANA_CLAVE en .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+    volumes:
+      # La fuente de datos Prometheus ya configurada al arrancar.
+      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+      - grafana-datos:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+volumes:
+  prometheus-datos:
+  grafana-datos:
+
+networks:
+  # La red 'interna' del compose de la aplicacion. Compose le pone de
+  # prefijo el nombre del proyecto (la carpeta ~/matriculas), y 'external'
+  # dice que la crea otro compose: este solo se une. Por eso la aplicacion
+  # tiene que estar levantada antes que el Collector.
+  aplicacion:
+    external: true
+    name: matriculas_interna

@@ -1,0 +1,57 @@
+<header class="barra-sup">
+  <div>
+    <h1>Solicitar matricula</h1>
+    <p class="sub">
+      @if (periodo(); as p) { Periodo {{ p.nombre }} &middot; maximo {{ maximo }} creditos }
+      @else { Sin periodo abierto }
+    </p>
+  </div>
+</header>
+
+<main class="lamina">
+  @if (errorCarga()) { <p class="aviso error">{{ errorCarga() }}</p> }
+  <app-aviso [de]="aviso" />
+
+  @if (cargando()) {
+    <p class="cargando">Cargando...</p>
+  } @else if (!periodo()) {
+    <section class="tarjeta"><p class="vacio">No hay ningun periodo abierto para matricula.</p></section>
+  } @else {
+    <div class="cursos">
+      @for (c of cursos(); track c.id) {
+        <label class="curso"
+               [class.elegido]="estaElegido(c.id)"
+               [class.bloqueado]="c.bloqueado">
+          <input type="checkbox"
+                 [checked]="estaElegido(c.id)"
+                 [disabled]="c.bloqueado"
+                 (change)="alternar(c)">
+          <span class="info">
+            <span class="nombre">{{ c.nombre }}</span>
+            <span class="meta">{{ c.codigo }} &middot; ciclo {{ c.ciclo }} &middot; {{ c.docente }}</span>
+            @if (c.bloqueado) {
+              <span class="candado">Necesitas aprobar {{ c.requisitos }}</span>
+            } @else if (c.requisitos) {
+              <span class="requisito">Requiere {{ c.requisitos }} &mdash; cumplido</span>
+            }
+          </span>
+          <span class="creditos">{{ c.creditos }}</span>
+        </label>
+      }
+    </div>
+
+    <footer class="resumen" [class.excede]="excede()">
+      <span>
+        {{ elegidos().size }} curso(s) &middot;
+        <strong>{{ creditos() }}</strong> de {{ maximo }} creditos
+      </span>
+      <button [disabled]="!puedeEnviar()" (click)="enviar()">
+        {{ enviando() ? 'Enviando...' : 'Solicitar' }}
+      </button>
+    </footer>
+
+    @if (excede()) {
+      <p class="aviso error" style="margin-top:14px">Te pasas de {{ maximo }} creditos. Quita algun curso.</p>
+    }
+  }
+</main>

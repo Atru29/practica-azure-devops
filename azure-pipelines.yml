@@ -1,0 +1,74 @@
+# =====================================================================
+#  CI/CD: cada push a main que toque la aplicacion construye las dos
+#  imagenes, las sube a acrdemo01prod y las despliega en la maquina.
+#
+#  El agente es autohospedado y vive en la propia maquina (vm-web1-prod),
+#  en el pool Default: la organizacion es nueva y los agentes de
+#  Microsoft necesitan una solicitud de paralelismo gratuito. Por eso la
+#  identidad de la maquina tiene AcrPush, no solo AcrPull. Cuando haya
+#  agentes hospedados, la etapa Construir deberia ir alli y la maquina
+#  volver a solo AcrPull.
+# =====================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+  # Solo lo que cambia lo que corre en produccion. Un commit que solo
+  # toca la guia, el SQL o los mockups no despliega nada.
+  paths:
+    include:
+      - app/api
+      - app/web
+      - app/docker-compose.prod.yml
+      - app/desplegar.sh
+      - azure-pipelines.yml
+
+pool:
+  name: Default
+
+variables:
+  REGISTRO: acrdemo01prod.azurecr.io
+
+stages:
+  - stage: Construir
+    displayName: Construir y subir las imagenes
+    jobs:
+      - job: imagenes
+        displayName: docker build + push
+        steps:
+          - checkout: self
+            clean: true
+
+          - script: |
+              set -euo pipefail
+              # La etiqueta es el hash corto del commit, como a mano.
+              ETIQUETA=$(git rev-parse --short HEAD)
+              echo "Etiqueta: $ETIQUETA"
+              az acr login --name acrdemo01prod
+              docker build --tag "$REGISTRO/matriculas-api:$ETIQUETA" app/api
+              docker build --tag "$REGISTRO/matriculas-web:$ETIQUETA" app/web
+              docker push "$REGISTRO/matriculas-api:$ETIQUETA"
+              docker push "$REGISTRO/matriculas-web:$ETIQUETA"
+            displayName: Construir y subir
+            env:
+              REGISTRO: $(REGISTRO)
+
+  - stage: Desplegar
+    displayName: Desplegar en vm-web1-prod
+    dependsOn: Construir
+    # Solo si Construir fue bien y es main (no una rama de prueba).
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: maquina
+        displayName: compose up + comprobar
+        steps:
+          - checkout: self
+
+          - script: |
+              set -euo pipefail
+              # El compose viaja con el codigo; .env.prod (secretos) solo
+              # vive en la maquina y no se toca salvo la ETIQUETA.
+              cp app/docker-compose.prod.yml "$HOME/matriculas/"
+              bash app/desplegar.sh "$(git rev-parse --short HEAD)"
+            displayName: Desplegar y comprobar

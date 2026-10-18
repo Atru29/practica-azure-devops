@@ -1,0 +1,60 @@
+.pantalla {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--v-50);
+}
+
+.tarjeta-entrar {
+  width: 100%;
+  max-width: 420px;
+  background: var(--blanco);
+  border: 1px solid var(--linea);
+  border-radius: 15px;
+  padding: 34px;
+  box-shadow: 0 1px 3px rgba(23,54,39,.06), 0 12px 32px rgba(23,54,39,.07);
+}
+
+.sello {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--v-600); color: #fff;
+  display: grid; place-items: center;
+  margin-bottom: 18px;
+}
+
+h1 { margin: 0 0 6px; font-size: 22px; }
+.lede { margin: 0 0 24px; color: var(--tinta-2); font-size: 14px; }
+
+form { display: grid; gap: 16px; }
+
+button[type="submit"] { justify-content: center; padding: 11px; font-size: 14px; }
+
+.demo { margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--linea); }
+.demo-t { margin: 0 0 10px; font-size: 12.5px; color: var(--tinta-3); }
+.demo code { background: var(--v-100); color: var(--v-700); padding: 2px 6px; border-radius: 5px; font-weight: 600; }
+.demo ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+
+.enlace {
+  font: inherit; font-size: 13px; font-weight: 400;
+  width: 100%; text-align: left;
+  padding: 8px 9px; border: 0; border-radius: 8px;
+  background: none; color: var(--tinta-2); cursor: pointer;
+  display: flex; align-items: center; gap: 9px;
+}
+.enlace:hover { background: var(--v-50); }
+
+.rol {
+  font-size: 11px; font-weight: 700;
+  padding: 3px 8px; border-radius: 20px;
+  min-width: 62px; text-align: center;
+}
+.rol-alumno  { background: var(--v-100);       color: var(--v-700); }
+.rol-gestor  { background: var(--ok-fondo);    color: var(--ok); }
+.rol-docente { background: var(--aviso-fondo); color: var(--aviso); }
+
+/* Movil: menos aire alrededor, la tarjeta ocupa casi todo el ancho. */
+@media (max-width: 768px) {
+  .pantalla { padding: 16px; place-items: start center; padding-top: 8vh; }
+  .tarjeta-entrar { padding: 24px 20px; }
+}

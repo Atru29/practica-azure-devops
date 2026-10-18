@@ -1,0 +1,38 @@
+# =====================================================================
+#  OpenTelemetry Collector: recibe lo que manda la API y lo reparte.
+#
+#    receptor   OTLP por gRPC en 4317 (el estandar de OpenTelemetry)
+#    proceso    batch: agrupa antes de enviar
+#    salida     metricas en formato Prometheus en 8889, para que
+#               Prometheus las recoja igual que las de node_exporter
+#
+#  En la fase 3 se anaden aqui las salidas de trazas (Tempo) y logs
+#  (Loki), sin tocar el codigo de la API: la API solo conoce al Collector.
+# =====================================================================
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+  batch: {}
+
+exporters:
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    # service.name -> job y service.instance.id -> instance, como el
+    # resto de objetivos de Prometheus. Ademas, service.version (el hash
+    # del commit) va como etiqueta en cada serie: asi se distingue que
+    # version respondio. (Sustituye a resource_to_telemetry_conversion,
+    # que el Collector marca como obsoleto.)
+    resource_constant_labels:
+      included: [service.version]
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus]

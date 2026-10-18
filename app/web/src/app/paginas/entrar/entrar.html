@@ -1,0 +1,41 @@
+<div class="pantalla">
+  <div class="tarjeta-entrar">
+    <div class="sello"><app-icono nombre="matricula" [tam]="23" /></div>
+    <h1>Registro de matriculas</h1>
+    <p class="lede">Entra para solicitar tu matricula o gestionar las solicitudes.</p>
+
+    <form (ngSubmit)="entrar()">
+      <label class="campo">
+        Correo
+        <input type="email" name="email" required autocomplete="username"
+               [ngModel]="email()" (ngModelChange)="email.set($event)">
+      </label>
+
+      <label class="campo">
+        Contrasena
+        <input type="password" name="clave" required autocomplete="current-password"
+               [ngModel]="clave()" (ngModelChange)="clave.set($event)">
+      </label>
+
+      <app-aviso [de]="aviso" />
+
+      <button type="submit" [disabled]="cargando()">
+        {{ cargando() ? 'Entrando...' : 'Entrar' }}
+      </button>
+    </form>
+
+    <div class="demo">
+      <p class="demo-t">Cuentas de demostracion &mdash; contrasena <code>{{ claveDemo }}</code></p>
+      <ul>
+        @for (c of cuentas; track c.email) {
+          <li>
+            <button type="button" class="enlace" (click)="elegir(c)">
+              <span class="rol" [class]="'rol-' + c.rol.toLowerCase()">{{ c.rol }}</span>
+              {{ c.email }}
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</div>

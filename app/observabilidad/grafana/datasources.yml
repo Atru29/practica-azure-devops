@@ -1,0 +1,13 @@
+# Fuentes de datos que Grafana crea solas al arrancar ("provisioning"):
+# nada de configurarlas a mano en la web y perderlas si se borra el
+# volumen.
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy
+    url: http://127.0.0.1:9090
+    isDefault: true
+    editable: false

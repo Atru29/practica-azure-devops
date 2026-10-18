@@ -1,0 +1,71 @@
+<header class="barra-sup">
+  <div>
+    <h1>Matriculas</h1>
+    <p class="sub">{{ pendientes().length }} solicitud(es) esperando resolucion</p>
+  </div>
+  <div class="derecha">
+    <button class="suave" (click)="cargar()">Actualizar</button>
+  </div>
+</header>
+
+<main class="lamina">
+  @if (errorCarga()) { <p class="aviso error">{{ errorCarga() }}</p> }
+  <app-aviso [de]="aviso" />
+
+  @if (cargando()) {
+    <p class="cargando">Cargando...</p>
+  } @else {
+    <section class="tarjeta">
+      @if (pendientes().length === 0) {
+        <p class="vacio">No hay solicitudes pendientes.</p>
+      } @else {
+        <table>
+          <thead>
+            <tr>
+              <th>Alumno</th><th>Periodo</th><th>Solicitada</th>
+              <th class="num">Cursos</th><th class="num">Creditos</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (m of pendientes(); track m.id) {
+              <tr>
+                <td>
+                  <div class="celda-persona">
+                    <div class="avatar">{{ iniciales(m.alumno) }}</div>
+                    <div class="datos"><b>{{ m.alumno }}</b><span>{{ m.alumnoCodigo }}</span></div>
+                  </div>
+                </td>
+                <td>{{ m.periodo }}</td>
+                <td>{{ m.fechaSolicitud | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="num">{{ m.cursos }}</td>
+                <td class="num">{{ m.creditos }}</td>
+                <td class="acciones">
+                  <button (click)="aprobar(m)">Aprobar</button>
+                  <button class="peligro" (click)="abrirRechazo(m.id)">Rechazar</button>
+                </td>
+              </tr>
+
+              @if (rechazando() === m.id) {
+                <tr class="fila-rechazo">
+                  <td colspan="6">
+                    <label class="campo">
+                      Motivo del rechazo
+                      <input type="text" name="motivo"
+                             placeholder="El alumno tiene derecho a saber por que"
+                             [ngModel]="motivo()" (ngModelChange)="motivo.set($event)">
+                    </label>
+                    <div class="acciones-rechazo">
+                      <button class="peligro" [disabled]="!motivo().trim()"
+                              (click)="confirmarRechazo(m)">Confirmar rechazo</button>
+                      <button class="suave" (click)="cancelarRechazo()">Cancelar</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      }
+    </section>
+  }
+</main>

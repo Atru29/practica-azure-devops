@@ -1,0 +1,10 @@
+.bloque-periodo { display: grid; gap: 15px; }
+.periodo-nombre { font-size: 26px; font-weight: 700; line-height: 1.1; }
+.periodo-fechas { font-size: 13px; color: var(--tinta-2); margin-top: 3px; }
+
+.dos-datos {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  padding-top: 12px; border-top: 1px solid var(--linea);
+}
+.rotulo { font-size: 11px; color: var(--tinta-3); text-transform: uppercase; letter-spacing: .05em; }
+.dato { font-size: 19px; font-weight: 700; }

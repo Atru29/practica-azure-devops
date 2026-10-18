@@ -1,0 +1,318 @@
+<header class="barra-sup">
+  <div>
+    <h1>Panel</h1>
+    <p class="sub">
+      @if (enCurso(); as p) { Resumen del periodo {{ p.nombre }} }
+      @else if (periodoAbierto(); as p) { Periodo {{ p.nombre }} }
+      @else { Sin periodo abierto }
+    </p>
+  </div>
+</header>
+
+<main class="lamina">
+  @if (error()) { <p class="aviso error">{{ error() }}</p> }
+
+  @if (cargando()) {
+    <p class="cargando">Cargando...</p>
+  } @else if (esGestor()) {
+
+    <section class="indicadores">
+      <div class="indicador">
+        <div class="icono"><app-icono nombre="alumnos" [tam]="19" /></div>
+        <div class="texto">
+          <span class="cifra">{{ alumnosActivos() }}</span>
+          <span class="etiqueta">Alumnos activos</span>
+          <span class="delta plano">{{ alumnos().length }} registrados en total</span>
+        </div>
+      </div>
+
+      <div class="indicador">
+        <div class="icono"><app-icono nombre="matricula" [tam]="19" /></div>
+        <div class="texto">
+          <span class="cifra">{{ matriculasDelPeriodo() }}</span>
+          <span class="etiqueta">Matriculas del periodo</span>
+          <span class="delta plano">{{ enCurso()?.nombre ?? 'sin periodo abierto' }}</span>
+        </div>
+      </div>
+
+      <div class="indicador" [class.acento]="pendientes().length > 0">
+        <div class="icono"><app-icono nombre="reloj" [tam]="19" /></div>
+        <div class="texto">
+          <span class="cifra">{{ pendientes().length }}</span>
+          <span class="etiqueta">Pendientes de revisar</span>
+          <span class="delta plano">{{ esperaMasLarga() ?? 'nada en espera' }}</span>
+        </div>
+      </div>
+
+      <div class="indicador">
+        <div class="icono"><app-icono nombre="creditos" [tam]="19" /></div>
+        <div class="texto">
+          <span class="cifra">{{ creditosMedios() | number:'1.0-1' }}</span>
+          <span class="etiqueta">Creditos por solicitud</span>
+          <span class="delta plano">maximo permitido: 24</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="rejilla-2">
+      <section class="tarjeta">
+        <div class="tarjeta-cab">
+          <h2>Solicitudes pendientes</h2>
+          <a class="mas" routerLink="/bandeja">Ver todas</a>
+        </div>
+        @if (pendientes().length === 0) {
+          <p class="vacio">No hay solicitudes esperando resolucion.</p>
+        } @else {
+          <table>
+            <thead>
+              <tr><th>Alumno</th><th>Periodo</th><th class="num">Cursos</th><th class="num">Creditos</th></tr>
+            </thead>
+            <tbody>
+              @for (m of pendientes().slice(0, 5); track m.id) {
+                <tr>
+                  <td>
+                    <div class="celda-persona">
+                      <div class="avatar">{{ iniciales(m.alumno) }}</div>
+                      <div class="datos"><b>{{ m.alumno }}</b><span>{{ m.alumnoCodigo }}</span></div>
+                    </div>
+                  </td>
+                  <td>{{ m.periodo }}</td>
+                  <td class="num">{{ m.cursos }}</td>
+                  <td class="num">{{ m.creditos }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </section>
+
+      <section class="tarjeta">
+        <div class="tarjeta-cab"><h2>Periodo en curso</h2></div>
+        <div class="tarjeta-cuerpo">
+          @if (enCurso(); as p) {
+            <div class="bloque-periodo">
+              <div>
+                <div class="periodo-nombre">{{ p.nombre }}</div>
+                <div class="periodo-fechas">
+                  Del {{ p.fechaInicio | date:'dd/MM/yyyy' }} al {{ p.fechaFin | date:'dd/MM/yyyy' }}
+                </div>
+                <div style="margin-top:9px"><span class="pastilla p-ok">{{ p.estado }}</span></div>
+              </div>
+
+              <div class="barra-fila">
+                <div class="barra-cab"><span>Avance del periodo</span><b>{{ avance() }}%</b></div>
+                <div class="barra-pista"><div class="barra-valor" [style.width.%]="avance()"></div></div>
+              </div>
+
+              <div class="dos-datos">
+                <div><div class="rotulo">Matriculas</div><div class="dato">{{ p.matriculas ?? 0 }}</div></div>
+                <div><div class="rotulo">Cursos ofertados</div><div class="dato">{{ cursos().length }}</div></div>
+              </div>
+            </div>
+          } @else {
+            <p class="vacio">No hay ningun periodo abierto.</p>
+          }
+        </div>
+      </section>
+    </div>
+
+    <div class="rejilla-2" style="margin-top:16px">
+      <section class="tarjeta">
+        <div class="tarjeta-cab"><h2>Matriculas por periodo</h2></div>
+        <div class="tarjeta-cuerpo">
+          @if (porPeriodo().length === 0) {
+            <p class="vacio">Sin datos.</p>
+          } @else {
+            <div class="barras">
+              @for (b of porPeriodo(); track b.etiqueta) {
+                <div class="barra-fila">
+                  <div class="barra-cab"><span>{{ b.etiqueta }}</span><b>{{ b.texto }}</b></div>
+                  <div class="barra-pista"><div class="barra-valor" [class.llena]="b.pct >= 90" [style.width.%]="b.pct"></div></div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="tarjeta">
+        <div class="tarjeta-cab"><h2>Cursos por ciclo</h2></div>
+        <div class="tarjeta-cuerpo">
+          @if (porCiclo().length === 0) {
+            <p class="vacio">Sin cursos registrados.</p>
+          } @else {
+            <div class="barras">
+              @for (b of porCiclo(); track b.etiqueta) {
+                <div class="barra-fila">
+                  <div class="barra-cab"><span>{{ b.etiqueta }}</span><b>{{ b.texto }}</b></div>
+                  <div class="barra-pista"><div class="barra-valor" [style.width.%]="b.pct"></div></div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+
+  } @else if (esDocente()) {
+
+    <section class="indicadores">
+      <div class="indicador">
+        <div class="icono"><app-icono nombre="cursos" [tam]="19" /></div>
+        <div class="texto">
+          <span class="cifra">{{ misCursos().length }}</span>
+          <span class="etiqueta">Cursos que imparto</span>
+          <span class="delta plano">de {{ cursos().length }} ofertados</span>
+        </div>
+      </div>
+      <div class="indicador">
+        <div class="icono"><app-icono nombre="creditos" [tam]="19" /></div>
+        <div class="texto">
+          <span class="cifra">{{ misCreditos() }}</span>
+          <span class="etiqueta">Creditos a mi cargo</span>
+          <span class="delta plano">suma de mis cursos</span>
+        </div>
+      </div>
+      <div class="indicador">
+        <div class="icono"><app-icono nombre="panel" [tam]="19" /></div>
+        <div class="texto">
+          <span class="cifra">{{ misCiclos() }}</span>
+          <span class="etiqueta">Ciclos distintos</span>
+          <span class="delta plano">en los que doy clase</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="rejilla-2">
+      <section class="tarjeta">
+        <div class="tarjeta-cab">
+          <h2>Mis cursos</h2>
+          <a class="mas" routerLink="/cursos">Ver todos</a>
+        </div>
+        @if (misCursos().length === 0) {
+          <p class="vacio">No tienes cursos asignados en este momento.</p>
+        } @else {
+          <table>
+            <thead><tr><th>Curso</th><th class="num">Ciclo</th><th class="num">Creditos</th></tr></thead>
+            <tbody>
+              @for (c of misCursos(); track c.id) {
+                <tr>
+                  <td><b>{{ c.nombre }}</b><br><span class="codigo">{{ c.codigo }}</span></td>
+                  <td class="num">{{ c.ciclo }}</td>
+                  <td class="num">{{ c.creditos }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </section>
+
+      <section class="tarjeta">
+        <div class="tarjeta-cab"><h2>Periodo abierto</h2></div>
+        <div class="tarjeta-cuerpo">
+          @if (periodoAbierto(); as p) {
+            <div class="bloque-periodo">
+              <div>
+                <div class="periodo-nombre">{{ p.nombre }}</div>
+                <div class="periodo-fechas">
+                  Del {{ p.fechaInicio | date:'dd/MM/yyyy' }} al {{ p.fechaFin | date:'dd/MM/yyyy' }}
+                </div>
+              </div>
+              <div class="barra-fila">
+                <div class="barra-cab"><span>Avance del periodo</span><b>{{ avance() }}%</b></div>
+                <div class="barra-pista"><div class="barra-valor" [style.width.%]="avance()"></div></div>
+              </div>
+            </div>
+          } @else {
+            <p class="vacio">No hay ningun periodo abierto.</p>
+          }
+        </div>
+      </section>
+    </div>
+
+  } @else {
+
+    <section class="indicadores">
+      <div class="indicador">
+        <div class="icono"><app-icono nombre="check" [tam]="19" /></div>
+        <div class="texto">
+          <span class="cifra">{{ aprobadas() }}</span>
+          <span class="etiqueta">Matriculas aprobadas</span>
+          <span class="delta plano">en todos los periodos</span>
+        </div>
+      </div>
+      <div class="indicador" [class.acento]="enEspera() > 0">
+        <div class="icono"><app-icono nombre="reloj" [tam]="19" /></div>
+        <div class="texto">
+          <span class="cifra">{{ enEspera() }}</span>
+          <span class="etiqueta">En espera de resolucion</span>
+          <span class="delta plano">las revisa el gestor</span>
+        </div>
+      </div>
+      <div class="indicador">
+        <div class="icono"><app-icono nombre="creditos" [tam]="19" /></div>
+        <div class="texto">
+          <span class="cifra">{{ creditosActuales() }}</span>
+          <span class="etiqueta">Creditos matriculados</span>
+          <span class="delta plano">maximo permitido: 24</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="rejilla-2">
+      <section class="tarjeta">
+        <div class="tarjeta-cab">
+          <h2>Mis matriculas</h2>
+          <a class="mas" routerLink="/mis-matriculas">Ver todas</a>
+        </div>
+        @if (mias().length === 0) {
+          <p class="vacio">Todavia no has solicitado ninguna matricula.</p>
+        } @else {
+          <table>
+            <thead><tr><th>Periodo</th><th class="num">Cursos</th><th class="num">Creditos</th><th>Estado</th></tr></thead>
+            <tbody>
+              @for (m of mias(); track m.id) {
+                <tr>
+                  <td><b>{{ m.periodo }}</b></td>
+                  <td class="num">{{ m.cursos }}</td>
+                  <td class="num">{{ m.creditos }}</td>
+                  <td>
+                    <span class="pastilla"
+                          [class.p-ok]="m.estado === 'Aprobada'"
+                          [class.p-espera]="m.estado === 'Solicitada'"
+                          [class.p-no]="m.estado === 'Rechazada'">{{ m.estado }}</span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </section>
+
+      <section class="tarjeta">
+        <div class="tarjeta-cab"><h2>Periodo abierto</h2></div>
+        <div class="tarjeta-cuerpo">
+          @if (periodoAbierto(); as p) {
+            <div class="bloque-periodo">
+              <div>
+                <div class="periodo-nombre">{{ p.nombre }}</div>
+                <div class="periodo-fechas">
+                  Del {{ p.fechaInicio | date:'dd/MM/yyyy' }} al {{ p.fechaFin | date:'dd/MM/yyyy' }}
+                </div>
+              </div>
+              <div class="barra-fila">
+                <div class="barra-cab"><span>Avance del periodo</span><b>{{ avance() }}%</b></div>
+                <div class="barra-pista"><div class="barra-valor" [style.width.%]="avance()"></div></div>
+              </div>
+              @if (auth.rol() === 'Alumno' && enEspera() === 0 && aprobadas() === 0) {
+                <a class="boton" routerLink="/solicitar">Solicitar matricula</a>
+              }
+            </div>
+          } @else {
+            <p class="vacio">No hay ningun periodo abierto para matricula.</p>
+          }
+        </div>
+      </section>
+    </div>
+  }
+</main>

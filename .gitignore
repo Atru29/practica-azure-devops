@@ -1,0 +1,30 @@
+# ---- secretos: nunca deben llegar al repositorio ----
+*.pfx
+*.pem
+*.key
+.env
+.env.*
+# Cualquier fichero .ejemplo es una PLANTILLA sin secretos y debe
+# versionarse. Con solo '!.env.ejemplo', .env.prod.ejemplo quedaba
+# ignorado por la regla .env.* de arriba.
+!*.ejemplo
+*.publishsettings
+secretos.*
+
+# ---- .NET ----
+bin/
+obj/
+*.user
+
+# ---- Angular / Node ----
+node_modules/
+dist/
+.angular/
+
+# ---- sistema ----
+.DS_Store
+*.swp
+
+# ---- .NET ----
+*.user
+.vs/

@@ -1,0 +1,30 @@
+# =====================================================================
+#  Que vigila Prometheus. Modelo "pull": es Prometheus quien va a
+#  buscar las metricas a cada objetivo (/metrics) cada scrape_interval.
+# =====================================================================
+
+global:
+  scrape_interval: 15s
+  # Etiqueta que se anade a todas las series: si un dia hay mas de una
+  # maquina, se distinguen por aqui.
+  external_labels:
+    maquina: vm-web1-prod
+
+scrape_configs:
+  # El propio Prometheus: cuantas series guarda, cuanto tarda...
+  - job_name: prometheus
+    static_configs:
+      - targets: ["127.0.0.1:9090"]
+
+  # La maquina: CPU, RAM, disco, red.
+  - job_name: node
+    static_configs:
+      - targets: ["127.0.0.1:9100"]
+
+  # La API, a traves del Collector (fase 2). honor_labels: respeta el
+  # job e instance que trae cada serie (job="matriculas-api") en vez de
+  # sustituirlos por los de este objetivo.
+  - job_name: otel-collector
+    honor_labels: true
+    static_configs:
+      - targets: ["127.0.0.1:8889"]

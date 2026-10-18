@@ -1,0 +1,98 @@
+# =====================================================================
+#  Entorno LOCAL de desarrollo
+#
+#  Levanta SQL Server en un contenedor para no tocar Azure mientras
+#  programas: ni gasta horas de maquina ni consume las 55 horas
+#  mensuales de la capa gratuita de Azure SQL.
+#
+#    docker compose up -d
+#    docker compose logs -f sqlserver
+#    docker compose down          (conserva los datos)
+#    docker compose down -v       (los borra)
+# =====================================================================
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: matriculas-sql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SQL_PASSWORD:?falta SQL_PASSWORD en el fichero .env}
+      # Developer tiene todas las funciones de Enterprise y es gratuita
+      # para desarrollo. Nunca en produccion: la licencia no lo permite.
+      MSSQL_PID: Developer
+    ports:
+      # 1433 y 1434 estan ocupados por otros proyectos de esta maquina
+      - "1435:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - interna
+
+  # Emulador de Azure Blob Storage. Habla el mismo protocolo que el
+  # servicio real, asi que el codigo es identico: solo cambia la cadena
+  # de conexion. Permite programar la constancia sin crear nada en Azure
+  # ni gastar un centimo.
+  almacen:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    container_name: matriculas-almacen
+    # --skipApiVersionCheck: el SDK de Azure va por delante del emulador
+    # y Azurite rechaza versiones de API que no conoce. Azure real si las
+    # acepta, asi que esto es un apano solo de desarrollo local.
+    command: azurite-blob --blobHost 0.0.0.0 --blobPort 10000 --location /datos --skipApiVersionCheck
+    ports:
+      - "10000:10000"
+    volumes:
+      - almacendata:/datos
+    networks:
+      - interna
+
+  api:
+    build:
+      context: ./api
+    container_name: matriculas-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      # Dentro de la red de Docker el servidor se llama 'sqlserver' y
+      # escucha en el 1433. El 1435 es solo el puerto publicado hacia
+      # tu portatil: entre contenedores no existe.
+      ConnectionStrings__Matriculas: >-
+        Server=sqlserver,1433;Database=appdb;User Id=sa;
+        Password=${SQL_PASSWORD:?falta SQL_PASSWORD en .env};
+        TrustServerCertificate=true;Encrypt=true
+      Jwt__Clave: ${JWT_CLAVE:?falta JWT_CLAVE en .env}
+      Jwt__Emisor: matriculas-api
+      Jwt__Audiencia: matriculas-web
+      # Credenciales publicas y fijas del emulador: las trae de serie y
+      # son identicas en todas las instalaciones. No es un secreto que
+      # se filtra, es parte de Azurite.
+      # En una sola linea a proposito: el '>-' de YAML une las lineas
+      # metiendo un espacio, y el analizador de Azure rechaza la cadena
+      # si hay espacios tras los ';'. El de SQL Server si los tolera,
+      # por eso la cadena de arriba si puede partirse.
+      Almacen__Conexion: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://almacen:10000/devstoreaccount1;"
+      Almacen__Contenedor: constancias
+    ports:
+      - "5080:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      almacen:
+        condition: service_started
+    networks:
+      - interna
+
+volumes:
+  # Volumen con nombre: los datos sobreviven a 'docker compose down'
+  sqldata:
+  almacendata:
+
+networks:
+  interna:
+    driver: bridge

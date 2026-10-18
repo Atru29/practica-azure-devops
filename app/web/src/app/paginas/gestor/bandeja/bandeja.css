@@ -1,0 +1,6 @@
+/* El td se queda como celda: ponerle 'display: grid' le quita el
+   comportamiento de celda y el colspan deja de ocupar la fila. */
+.fila-rechazo td { background: var(--peligro-fondo); }
+.fila-rechazo .campo { margin-bottom: 10px; }
+.fila-rechazo .campo input { max-width: 460px; background: var(--blanco); }
+.acciones-rechazo { display: flex; gap: 8px; }

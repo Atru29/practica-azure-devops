@@ -1,0 +1,43 @@
+<header class="barra-sup">
+  <div>
+    <h1>Cursos</h1>
+    <p class="sub">{{ todos().length }} curso(s) &middot; {{ creditosTotales() }} creditos en total</p>
+  </div>
+  <div class="derecha">
+    <div class="buscador">
+      <app-icono nombre="buscar" [tam]="15" />
+      <input type="search" placeholder="Buscar curso o docente"
+             [ngModel]="filtro()" (ngModelChange)="filtro.set($event)">
+    </div>
+  </div>
+</header>
+
+<main class="lamina">
+  @if (error()) { <p class="aviso error">{{ error() }}</p> }
+
+  @if (cargando()) {
+    <p class="cargando">Cargando...</p>
+  } @else {
+    <section class="tarjeta">
+      @if (visibles().length === 0) {
+        <p class="vacio">Ningun curso coincide con la busqueda.</p>
+      } @else {
+        <table>
+          <thead>
+            <tr><th>Curso</th><th>Docente</th><th class="num">Ciclo</th><th class="num">Creditos</th></tr>
+          </thead>
+          <tbody>
+            @for (c of visibles(); track c.id) {
+              <tr>
+                <td><b>{{ c.nombre }}</b><br><span class="codigo">{{ c.codigo }}</span></td>
+                <td>{{ c.docente }}</td>
+                <td class="num">{{ c.ciclo }}</td>
+                <td class="num">{{ c.creditos }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </section>
+  }
+</main>

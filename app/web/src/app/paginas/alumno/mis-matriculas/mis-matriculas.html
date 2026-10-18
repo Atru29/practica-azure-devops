@@ -1,0 +1,53 @@
+<header class="barra-sup">
+  <div>
+    <h1>Mis matriculas</h1>
+    <p class="sub">{{ matriculas().length }} solicitud(es) en total</p>
+  </div>
+</header>
+
+<main class="lamina">
+  @if (errorCarga()) { <p class="aviso error">{{ errorCarga() }}</p> }
+  <app-aviso [de]="aviso" />
+
+  @if (cargando()) {
+    <p class="cargando">Cargando...</p>
+  } @else if (matriculas().length === 0) {
+    <section class="tarjeta"><p class="vacio">Todavia no has solicitado ninguna matricula.</p></section>
+  } @else {
+    <div class="lista">
+      @for (m of matriculas(); track m.id) {
+        <article class="tarjeta">
+          <div class="tarjeta-cab">
+            <h2>{{ m.periodo }}</h2>
+            <span class="pastilla"
+                  style="margin-left:auto"
+                  [class.p-ok]="m.estado === 'Aprobada'"
+                  [class.p-espera]="m.estado === 'Solicitada'"
+                  [class.p-no]="m.estado === 'Rechazada'">{{ m.estado }}</span>
+          </div>
+          <div class="tarjeta-cuerpo">
+            <dl>
+              <div><dt>Cursos</dt><dd>{{ m.cursos }}</dd></div>
+              <div><dt>Creditos</dt><dd>{{ m.creditos }}</dd></div>
+              <div><dt>Solicitada</dt><dd>{{ m.fechaSolicitud | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+              @if (m.fechaResolucion) {
+                <div><dt>Resuelta</dt><dd>{{ m.fechaResolucion | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+              }
+            </dl>
+            @if (m.observacion) {
+              <p class="observacion"><strong>Motivo:</strong> {{ m.observacion }}</p>
+            }
+
+            @if (m.estado === 'Aprobada') {
+              <div class="acciones-ficha">
+                <button [disabled]="descargando() === m.id" (click)="descargar(m)">
+                  {{ descargando() === m.id ? 'Generando...' : 'Descargar constancia' }}
+                </button>
+              </div>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</main>

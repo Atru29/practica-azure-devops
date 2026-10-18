@@ -1,0 +1,5 @@
+/* La estructura vive en styles.css (.disposicion, .lateral, .contenido)
+   porque la comparten el armazon y las paginas. Aqui solo lo propio. */
+.usuario-caja .datos b {
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;
+}

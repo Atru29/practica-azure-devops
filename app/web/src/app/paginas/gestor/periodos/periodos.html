@@ -1,0 +1,42 @@
+<header class="barra-sup">
+  <div>
+    <h1>Periodos</h1>
+    <p class="sub">Periodos academicos y su estado</p>
+  </div>
+</header>
+
+<main class="lamina">
+  @if (error()) { <p class="aviso error">{{ error() }}</p> }
+
+  @if (cargando()) {
+    <p class="cargando">Cargando...</p>
+  } @else {
+    <section class="tarjeta">
+      @if (periodos().length === 0) {
+        <p class="vacio">No hay periodos registrados.</p>
+      } @else {
+        <table>
+          <thead>
+            <tr><th>Periodo</th><th>Inicio</th><th>Fin</th><th class="num">Matriculas</th><th>Estado</th></tr>
+          </thead>
+          <tbody>
+            @for (p of periodos(); track p.id) {
+              <tr>
+                <td><b>{{ p.nombre }}</b></td>
+                <td>{{ p.fechaInicio | date:'dd/MM/yyyy' }}</td>
+                <td>{{ p.fechaFin | date:'dd/MM/yyyy' }}</td>
+                <td class="num">{{ p.matriculas ?? 0 }}</td>
+                <td>
+                  <span class="pastilla"
+                        [class.p-ok]="p.estado === 'Abierto'"
+                        [class.p-neutro]="p.estado === 'Cerrado'"
+                        [class.p-info]="p.estado !== 'Abierto' && p.estado !== 'Cerrado'">{{ p.estado }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </section>
+  }
+</main>

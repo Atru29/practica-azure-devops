@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Periodos &middot; Matriculas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<div class="disposicion">
+<aside class="lateral">
+  <div class="marca">
+    <div class="marca-icono"><svg viewBox="0 0 24 24" fill="currentColor" width="19" height="19"><path d="M9 2h6a2 2 0 012 2v1h2a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1h2V4a2 2 0 012-2z"/><path d="M8 12l2.5 2.5L16 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="marca-texto"><b>Matriculas</b><span>Universidad Demo</span></div>
+  </div>
+  <nav class="menu">
+    <div class="menu-titulo">GENERAL</div>
+    <a href="index.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h7v8H3zM14 3h7v5h-7zM14 11h7v10h-7zM3 14h7v7H3z"/></svg><span>Panel</span></a>
+    <div class="menu-titulo">ACADEMICO</div>
+    <a href="matriculas.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 2h6a2 2 0 012 2v1h2a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1h2V4a2 2 0 012-2z"/><path d="M8 12l2.5 2.5L16 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Matriculas</span><span class="cuenta">2</span></a>
+    <a href="alumnos.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 1116 0z"/></svg><span>Alumnos</span></a>
+    <a href="cursos.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4a2 2 0 012-2h12a2 2 0 012 2v16l-4-2-4 2-4-2-4 2z"/></svg><span>Cursos</span></a>
+    <a href="periodos.html" class="activo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 2v3M17 2v3M3 9h18M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Periodos</span></a>
+  </nav>
+  <div class="lateral-pie">
+    <div class="usuario-caja">
+      <div class="avatar">GC</div>
+      <div class="datos"><b>Gestor Central</b><span>Gestor</span></div>
+      <button class="salir" title="Salir"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+  </div>
+</aside>
+  <div class="contenido">
+    <header class="barra-sup">
+      <div>
+        <h1>Periodos</h1>
+        <p class="sub">Periodos academicos y su estado</p>
+      </div>
+      <div class="derecha"><button><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Nuevo periodo</button></div>
+    </header>
+    <main class="lamina">
+    <section class="tarjeta">
+      <table>
+        <thead>
+          <tr><th>Periodo</th><th>Inicio</th><th>Fin</th><th class="num">Matriculas</th><th>Estado</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>2026-II</b></td><td>01/08/2026</td><td>20/12/2026</td><td class="num">118</td>
+            <td><span class="pastilla p-ok">Abierto</span></td>
+            <td class="acciones"><button class="suave">Cerrar periodo</button></td>
+          </tr>
+          <tr>
+            <td><b>2026-I</b></td><td>01/03/2026</td><td>15/07/2026</td><td class="num">134</td>
+            <td><span class="pastilla p-neutro">Cerrado</span></td>
+            <td class="acciones"><button class="suave">Ver</button></td>
+          </tr>
+          <tr>
+            <td><b>2025-II</b></td><td>01/08/2025</td><td>20/12/2025</td><td class="num">129</td>
+            <td><span class="pastilla p-neutro">Cerrado</span></td>
+            <td class="acciones"><button class="suave">Ver</button></td>
+          </tr>
+          <tr>
+            <td><b>2027-I</b></td><td>01/03/2027</td><td>15/07/2027</td><td class="num">0</td>
+            <td><span class="pastilla p-info">Planificado</span></td>
+            <td class="acciones"><button class="suave">Abrir</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    </main>
+  </div>
+</div>
+</body>
+</html>

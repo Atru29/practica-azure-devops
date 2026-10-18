@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Matriculas &middot; Matriculas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<div class="disposicion">
+<aside class="lateral">
+  <div class="marca">
+    <div class="marca-icono"><svg viewBox="0 0 24 24" fill="currentColor" width="19" height="19"><path d="M9 2h6a2 2 0 012 2v1h2a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1h2V4a2 2 0 012-2z"/><path d="M8 12l2.5 2.5L16 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="marca-texto"><b>Matriculas</b><span>Universidad Demo</span></div>
+  </div>
+  <nav class="menu">
+    <div class="menu-titulo">GENERAL</div>
+    <a href="index.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h7v8H3zM14 3h7v5h-7zM14 11h7v10h-7zM3 14h7v7H3z"/></svg><span>Panel</span></a>
+    <div class="menu-titulo">ACADEMICO</div>
+    <a href="matriculas.html" class="activo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 2h6a2 2 0 012 2v1h2a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1h2V4a2 2 0 012-2z"/><path d="M8 12l2.5 2.5L16 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Matriculas</span><span class="cuenta">2</span></a>
+    <a href="alumnos.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 1116 0z"/></svg><span>Alumnos</span></a>
+    <a href="cursos.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4a2 2 0 012-2h12a2 2 0 012 2v16l-4-2-4 2-4-2-4 2z"/></svg><span>Cursos</span></a>
+    <a href="periodos.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 2v3M17 2v3M3 9h18M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Periodos</span></a>
+  </nav>
+  <div class="lateral-pie">
+    <div class="usuario-caja">
+      <div class="avatar">GC</div>
+      <div class="datos"><b>Gestor Central</b><span>Gestor</span></div>
+      <button class="salir" title="Salir"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+  </div>
+</aside>
+  <div class="contenido">
+    <header class="barra-sup">
+      <div>
+        <h1>Matriculas</h1>
+        <p class="sub">3 solicitudes esperando resolucion</p>
+      </div>
+      <div class="derecha"><select><option>Todos los estados</option><option>Solicitada</option><option>Aprobada</option><option>Rechazada</option></select> <select><option>Periodo 2026-II</option><option>Periodo 2026-I</option></select></div>
+    </header>
+    <main class="lamina">
+    <section class="tarjeta">
+      <table>
+        <thead>
+          <tr><th>Alumno</th><th>Periodo</th><th>Solicitada</th><th class="num">Cursos</th><th class="num">Creditos</th><th>Estado</th><th></th></tr>
+        </thead>
+        <tbody>
+            <tr>
+              <td><div class="celda-persona"><div class="avatar">AQ</div><div class="datos"><b>Ana Quispe Mamani</b><span>A2026001</span></div></div></td>
+              <td>2026-II</td>
+              <td>08/10/2026 22:19</td>
+              <td class="num">2</td>
+              <td class="num">8</td>
+              <td><span class="pastilla p-espera">Solicitada</span></td>
+              <td class="acciones"><button>Aprobar</button> <button class="peligro">Rechazar</button></td>
+            </tr>
+            <tr>
+              <td><div class="celda-persona"><div class="avatar">LR</div><div class="datos"><b>Luis Ramos Diaz</b><span>A2026002</span></div></div></td>
+              <td>2026-II</td>
+              <td>08/10/2026 22:19</td>
+              <td class="num">2</td>
+              <td class="num">7</td>
+              <td><span class="pastilla p-espera">Solicitada</span></td>
+              <td class="acciones"><button>Aprobar</button> <button class="peligro">Rechazar</button></td>
+            </tr>
+            <tr>
+              <td><div class="celda-persona"><div class="avatar">CM</div><div class="datos"><b>Carla Mendoza Rios</b><span>A2026003</span></div></div></td>
+              <td>2026-II</td>
+              <td>08/10/2026 21:04</td>
+              <td class="num">5</td>
+              <td class="num">18</td>
+              <td><span class="pastilla p-espera">Solicitada</span></td>
+              <td class="acciones"><button>Aprobar</button> <button class="peligro">Rechazar</button></td>
+            </tr>
+            <tr>
+              <td><div class="celda-persona"><div class="avatar">JT</div><div class="datos"><b>Jose Taipe Huaman</b><span>A2025014</span></div></div></td>
+              <td>2026-II</td>
+              <td>07/10/2026 16:40</td>
+              <td class="num">4</td>
+              <td class="num">15</td>
+              <td><span class="pastilla p-ok">Aprobada</span></td>
+              <td class="acciones"><button class="suave">Ver detalle</button></td>
+            </tr>
+            <tr>
+              <td><div class="celda-persona"><div class="avatar">SV</div><div class="datos"><b>Sandra Vilca Apaza</b><span>A2025022</span></div></div></td>
+              <td>2026-II</td>
+              <td>07/10/2026 11:12</td>
+              <td class="num">3</td>
+              <td class="num">12</td>
+              <td><span class="pastilla p-ok">Aprobada</span></td>
+              <td class="acciones"><button class="suave">Ver detalle</button></td>
+            </tr>
+            <tr>
+              <td><div class="celda-persona"><div class="avatar">MP</div><div class="datos"><b>Miguel Pariona Soto</b><span>A2024008</span></div></div></td>
+              <td>2026-I</td>
+              <td>20/03/2026 09:55</td>
+              <td class="num">4</td>
+              <td class="num">16</td>
+              <td><span class="pastilla p-no">Rechazada</span></td>
+              <td class="acciones"><button class="suave">Ver detalle</button></td>
+            </tr>
+        </tbody>
+      </table>
+    </section>
+    </main>
+  </div>
+</div>
+</body>
+</html>

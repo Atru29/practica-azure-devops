@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Cursos &middot; Matriculas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<div class="disposicion">
+<aside class="lateral">
+  <div class="marca">
+    <div class="marca-icono"><svg viewBox="0 0 24 24" fill="currentColor" width="19" height="19"><path d="M9 2h6a2 2 0 012 2v1h2a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1h2V4a2 2 0 012-2z"/><path d="M8 12l2.5 2.5L16 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="marca-texto"><b>Matriculas</b><span>Universidad Demo</span></div>
+  </div>
+  <nav class="menu">
+    <div class="menu-titulo">GENERAL</div>
+    <a href="index.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h7v8H3zM14 3h7v5h-7zM14 11h7v10h-7zM3 14h7v7H3z"/></svg><span>Panel</span></a>
+    <div class="menu-titulo">ACADEMICO</div>
+    <a href="matriculas.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 2h6a2 2 0 012 2v1h2a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1h2V4a2 2 0 012-2z"/><path d="M8 12l2.5 2.5L16 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Matriculas</span><span class="cuenta">2</span></a>
+    <a href="alumnos.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 1116 0z"/></svg><span>Alumnos</span></a>
+    <a href="cursos.html" class="activo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4a2 2 0 012-2h12a2 2 0 012 2v16l-4-2-4 2-4-2-4 2z"/></svg><span>Cursos</span></a>
+    <a href="periodos.html"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 2v3M17 2v3M3 9h18M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Periodos</span></a>
+  </nav>
+  <div class="lateral-pie">
+    <div class="usuario-caja">
+      <div class="avatar">GC</div>
+      <div class="datos"><b>Gestor Central</b><span>Gestor</span></div>
+      <button class="salir" title="Salir"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+  </div>
+</aside>
+  <div class="contenido">
+    <header class="barra-sup">
+      <div>
+        <h1>Cursos</h1>
+        <p class="sub">5 cursos ofertados en 2026-II</p>
+      </div>
+      <div class="derecha"><div class="buscador"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="search" placeholder="Buscar curso"></div> <button><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Nuevo curso</button></div>
+    </header>
+    <main class="lamina">
+    <section class="tarjeta">
+      <table>
+        <thead>
+          <tr><th>Curso</th><th>Docente</th><th class="num">Ciclo</th><th class="num">Creditos</th><th>Ocupacion</th><th></th></tr>
+        </thead>
+        <tbody>
+            <tr>
+              <td><b>Bases de datos I</b><br><span style="font-size:11.5px;color:var(--tinta-3);font-family:ui-monospace,monospace">BD101</span></td>
+              <td>Maria Torres Leon</td>
+              <td class="num">3</td>
+              <td class="num">4</td>
+              <td style="min-width:170px">
+                <div class="barra-cab" style="margin-bottom:4px"><span style="font-size:12px">28 / 30</span><b style="font-size:12px">93%</b></div>
+                <div class="barra-pista"><div class="barra-valor llena" style="width:93%"></div></div>
+              </td>
+              <td class="acciones"><button class="suave">Ver</button></td>
+            </tr>
+            <tr>
+              <td><b>Desarrollo web</b><br><span style="font-size:11.5px;color:var(--tinta-3);font-family:ui-monospace,monospace">WEB101</span></td>
+              <td>Jorge Flores Vega</td>
+              <td class="num">3</td>
+              <td class="num">4</td>
+              <td style="min-width:170px">
+                <div class="barra-cab" style="margin-bottom:4px"><span style="font-size:12px">24 / 30</span><b style="font-size:12px">80%</b></div>
+                <div class="barra-pista"><div class="barra-valor " style="width:80%"></div></div>
+              </td>
+              <td class="acciones"><button class="suave">Ver</button></td>
+            </tr>
+            <tr>
+              <td><b>Bases de datos II</b><br><span style="font-size:11.5px;color:var(--tinta-3);font-family:ui-monospace,monospace">BD201</span></td>
+              <td>Maria Torres Leon</td>
+              <td class="num">4</td>
+              <td class="num">4</td>
+              <td style="min-width:170px">
+                <div class="barra-cab" style="margin-bottom:4px"><span style="font-size:12px">19 / 30</span><b style="font-size:12px">63%</b></div>
+                <div class="barra-pista"><div class="barra-valor " style="width:63%"></div></div>
+              </td>
+              <td class="acciones"><button class="suave">Ver</button></td>
+            </tr>
+            <tr>
+              <td><b>Computacion en la nube</b><br><span style="font-size:11.5px;color:var(--tinta-3);font-family:ui-monospace,monospace">CLD101</span></td>
+              <td>Jorge Flores Vega</td>
+              <td class="num">5</td>
+              <td class="num">3</td>
+              <td style="min-width:170px">
+                <div class="barra-cab" style="margin-bottom:4px"><span style="font-size:12px">9 / 25</span><b style="font-size:12px">36%</b></div>
+                <div class="barra-pista"><div class="barra-valor aviso" style="width:36%"></div></div>
+              </td>
+              <td class="acciones"><button class="suave">Ver</button></td>
+            </tr>
+            <tr>
+              <td><b>Redes y comunicaciones</b><br><span style="font-size:11.5px;color:var(--tinta-3);font-family:ui-monospace,monospace">RED201</span></td>
+              <td>Maria Torres Leon</td>
+              <td class="num">4</td>
+              <td class="num">4</td>
+              <td style="min-width:170px">
+                <div class="barra-cab" style="margin-bottom:4px"><span style="font-size:12px">22 / 30</span><b style="font-size:12px">73%</b></div>
+                <div class="barra-pista"><div class="barra-valor " style="width:73%"></div></div>
+              </td>
+              <td class="acciones"><button class="suave">Ver</button></td>
+            </tr>
+        </tbody>
+      </table>
+    </section>
+    </main>
+  </div>
+</div>
+</body>
+</html>

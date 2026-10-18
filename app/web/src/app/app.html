@@ -1,0 +1,41 @@
+@if (auth.autenticado()) {
+  <div class="disposicion">
+    <aside class="lateral">
+      <div class="marca">
+        <div class="marca-icono"><app-icono nombre="matricula" [tam]="19" /></div>
+        <div class="marca-texto"><b>Matriculas</b><span>Universidad Demo</span></div>
+      </div>
+
+      <nav class="menu">
+        @for (grupo of menu(); track grupo.titulo) {
+          <div class="menu-titulo">{{ grupo.titulo }}</div>
+          @for (enlace of grupo.enlaces; track enlace.ruta) {
+            <a [routerLink]="enlace.ruta" routerLinkActive="activo">
+              <app-icono [nombre]="enlace.icono" />
+              <span>{{ enlace.texto }}</span>
+            </a>
+          }
+        }
+      </nav>
+
+      <div class="lateral-pie">
+        <div class="usuario-caja">
+          <div class="avatar">{{ iniciales() }}</div>
+          <div class="datos">
+            <b>{{ auth.nombre() }}</b>
+            <span>{{ auth.rol() }}</span>
+          </div>
+          <button class="salir" title="Salir" (click)="auth.salir()">
+            <app-icono nombre="salir" [tam]="16" />
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="contenido">
+      <router-outlet />
+    </div>
+  </div>
+} @else {
+  <router-outlet />
+}
