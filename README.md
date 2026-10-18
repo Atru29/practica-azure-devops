@@ -1,21 +1,31 @@
-# Practica Azure: matriculas con .NET, Angular y Azure SQL
+# Laboratorio DevOps en Azure: de la infraestructura a la observabilidad
 
-Una aplicacion de matriculas universitarias (alumnos, docentes, cursos, periodos,
-matriculas con aprobacion y constancia en PDF) desplegada en Azure de principio a fin,
-paso a paso con Azure CLI, y documentada con cada comando, su salida real y el porque.
+**Infraestructura paso a paso, CI/CD con Azure Pipelines, HTTPS y observabilidad con
+Prometheus, Grafana y OpenTelemetry.** La aplicacion es la excusa: un sistema de
+matriculas en .NET y Angular, lo bastante real como para que todo lo demas tenga
+sentido.
 
-No es una plantilla para copiar y pegar: es un laboratorio para entender cada pieza de
-un despliegue real, incluidos los errores del camino y como se resolvieron.
+Cada paso esta documentado con su comando, su salida real y el porque, incluidos los
+errores del camino y como se resolvieron. No es una plantilla para copiar y pegar: es
+un laboratorio para entender cada pieza de lo que pasa entre un `git push` y un
+servicio en produccion que se sabe que funciona.
 
-## Que demuestra
+## El recorrido
 
-| Area | Que se hizo |
+| | Que se hizo |
 |---|---|
-| **Cloud (Azure)** | Red virtual con NSG de minimo privilegio, VM Ubuntu con identidad administrada, Azure SQL sin servidor cerrada a la subred, Blob Storage privado, Container Registry sin usuario admin |
-| **CI/CD** | Azure Pipelines: cada `git push` construye las imagenes, las sube al registro, despliega, espera a que la API este sana, hace rollback si no y lanza una prueba de humo por HTTPS |
-| **Seguridad** | HTTPS con Let's Encrypt (TLS 1.3, renovacion automatica), JWT firmado, autorizacion por objeto contra IDOR/BOLA probada con ataques reales, usuario de base de datos con solo `EXECUTE`, contenedores sin root |
-| **Observabilidad** | Prometheus + node_exporter + Grafana para la maquina; OpenTelemetry + Collector para la API (metodo RED y percentiles) |
-| **Arquitectura** | Comparativa de coste real (precios de Azure) entre este laboratorio y dos arquitecturas de produccion con servicios gestionados |
+| **1. Infraestructura** | Cada recurso de Azure levantado con Azure CLI: red virtual con NSG de minimo privilegio, VM Ubuntu con identidad administrada, Azure SQL sin servidor cerrada a la subred, Blob Storage privado, Container Registry sin usuario admin |
+| **2. Flujo DevOps** | Azure Pipelines: cada `git push` construye las imagenes, las sube al registro, despliega, espera a que la API este sana, hace rollback si no lo esta y lanza una prueba de humo por HTTPS. Un commit que solo toca documentacion no despliega |
+| **3. Seguridad** | HTTPS con Let's Encrypt (TLS 1.3, renovacion automatica), JWT firmado, autorizacion por objeto contra IDOR/BOLA probada con ataques reales, usuario de base de datos con solo `EXECUTE`, contenedores sin root, secretos fuera del repositorio |
+| **4. Observabilidad** | Ver que pasa dentro sin entrar a la maquina: Prometheus + node_exporter + Grafana para la VM, y OpenTelemetry + Collector para cada peticion a la API (metodo RED: tasa, errores y duracion en percentiles). Fue la observabilidad la que detecto que el disco crecia con cada build |
+| **5. Arquitectura** | Coste real con precios de Azure: este laboratorio frente a dos arquitecturas de produccion con servicios gestionados, y el criterio para elegir |
+
+## La aplicacion de ejemplo
+
+Matriculas universitarias: alumnos, docentes, cursos con prerrequisitos, periodos,
+solicitudes que aprueba un gestor y constancia en PDF guardada en Blob Storage. API
+.NET con todo el acceso a datos por procedimientos almacenados, y Angular con diseno
+para escritorio y movil.
 
 ## Arquitectura
 
